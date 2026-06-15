@@ -1,0 +1,12 @@
+python-dotenv
+gunicorn
+Flask
+flask-cors
+pyjwt
+flask-migrate
+flask-bcrypt
+flask-sqlalchemy
+python-dateutil
+pandas
+matplotlib
+beautifulsoup4

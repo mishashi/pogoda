@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  vue-frontend:
+    build: ./web/frontend
+    container_name: vue-frontend
+    ports:
+      - "127.0.0.1:8070:80"
+    volumes:
+      - ./web/frontend/public/graphs:/usr/share/nginx/html/graphs
+    networks:
+      - app-network
+    restart: always
+
+  flask-backend:
+    build: ./web/backend
+    container_name: flask-backend
+    ports:
+      - "127.0.0.1:5111:8000"
+    environment:
+      - FLASK_ENV=production
+      - INSIDE_DOCKER=1
+      - FLASK_KEY=${FLASK_KEY}
+      - ADMIN_KEY=${ADMIN_KEY}
+    volumes:
+      - ./web/backend/instance:/app/instance
+      - ./analys:/analys:rw
+      - ./analys/temp_tables:/analys/temp_tables:rw
+      - ./web/frontend/public/graphs:/app/../frontend/public/graphs:rw
+    command: gunicorn -w 4 -b 0.0.0.0:8000 app:app
+    networks:
+      - app-network
+    restart: always
+    env_file:
+      - .env
+
+networks:
+  app-network:
+    driver: bridge
